@@ -5,6 +5,25 @@ import './index.css';
 import products from './products';
 //import * as serviceWorker from './serviceWorker';
 
+
+//console.log(products);
+
+
+
+class Result extends Component {
+    render() {
+        return (
+            <div className="stocked">
+                <h2>{this.props.product.name}</h2>
+                <p>{this.props.product.price}</p>
+                <p>{this.props.product.description}</p>
+            </div>
+        )
+    }
+}
+
+
+
 class Results extends Component{
     constructor(props) {
         super(props);
@@ -14,6 +33,7 @@ class Results extends Component{
     }
 
     componentWillReceiveProps(nextProps){
+        //console.log(nextProps.query);
         var foundProducts = nextProps.products.filter(product => {
             return product.name.toLowerCase().match(nextProps.query.toLowerCase()) ||
                    product.description.toLowerCase().match(nextProps.query.toLowerCase());
@@ -21,21 +41,25 @@ class Results extends Component{
           this.setState({
             foundProducts: foundProducts
           });
-        console.log("RES: " + nextProps.query);
+        console.log("REZ: " + nextProps.query);
+        console.log(nextProps.products);
     }
 
     render() {
         return (
             <div className="results">
-                <div className="stocked">
-                    <h2>Toothpasted</h2>
-                    <p>$2.99</p>
-                    <p>Lorem ipsum dolor dskdf lkjshd iweh wiu eidushf usdhfoiewn oiowe oiwehfwe oihf</p>
-                </div>
+                {this.state.foundProducts.map((product, i) => { //could remove function and >
+          return (
+            <Result product={product} key={i} />
+          )
+        })}
             </div>
         )
     }
 }
+
+
+
 
 class Searchbar extends Component{
     
@@ -54,12 +78,15 @@ class Searchbar extends Component{
 }
 
 
+
+
 class Search extends Component{ //Was simply function App() { with no render(){ below
     
     constructor(props) {
         super(props);
         this.state = {
-            query: ''
+            query: '',
+            //productz: products //charles helped
         }
     }
 
@@ -72,33 +99,16 @@ class Search extends Component{ //Was simply function App() { with no render(){ 
         return (
           <div className="search">
             <Searchbar onQuery={this.handleQuery.bind(this)}/>
-            <Results products={this.state.products} query={this.state.query} />
-
+            <Results products={this.props.products} query={this.state.query} />
           </div>
           ); 
     }
 }
 
-
-class App extends Component{ //Was simply function App() { with no render(){ below
-  
-   render(){
-    return (
-      <div className="App">
-        
-        <h1>homēapp.io</h1>
-        
-        <Search />
-        
-      </div>
-      );
-    }
-  } 
-
-
-
-
-ReactDOM.render(<Search />, document.getElementById('root'));
+ReactDOM.render(
+    <Search products={products} />,  //I was MISSING THIS products={products}!!
+    document.getElementById('root')
+);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
